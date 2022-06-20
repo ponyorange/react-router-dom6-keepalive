@@ -1,0 +1,27 @@
+.page1{
+  background-color: antiquewhite;
+  height: 100%;
+  animation: pagein .2s;
+}
+
+.pageback{
+  animation: pageout .2s;
+}
+
+@keyframes pagein {
+  from{
+    transform: translate(100%,0);
+  }
+  to{
+    transform: translate(0,0);
+  }
+}
+
+@keyframes pageout {
+  from{
+    transform: translate(0,0);
+  }
+  to{
+    transform: translate(100%,0);
+  }
+}

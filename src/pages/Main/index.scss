@@ -1,0 +1,21 @@
+.main{
+  height: 100%;
+  //width: 100%;
+  overflow: auto;
+  padding-bottom: 50px;
+  .tabbar{
+    flex: 0;
+    border-top: solid 1px var(--adm-border-color);
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    background-color: #fff;
+  }
+  .adm-tab-bar-item-active{
+    color: rgb(33,185,122);
+  }
+  .iconfont{
+    font-size: 20px;
+  }
+}
+
