@@ -1,66 +1,88 @@
-import { Navigate } from "react-router-dom";
 import { lazy } from "react";
 
 import withRouter from "./withRouter"; //给组件包装路由
+import withNavigator from "./withNavigator";
 
 //一级路由
-const RouterController = withRouter(lazy(() => import("./RouterController")));
+const Login = lazy(() => import("../pages/Login"));
+const NetFail = lazy(() => import("../pages/404"));
+const RouterController = lazy(() => import("./RouterController"));
 //二级路由
-const Main = withRouter(lazy(() => import("../pages/Main")));
+const Main = lazy(() => import("../pages/Main"));
 const TabPage1 = withRouter(lazy(() => import("../pages/TabPage1")));
 const TabPage2 = withRouter(lazy(() => import("../pages/TabPage2")));
 const TabPage3 = withRouter(lazy(() => import("../pages/TabPage3")));
 const TabPage4 = withRouter(lazy(() => import("../pages/TabPage4")));
 
-const Page1 = withRouter(lazy(() => import("../pages/Page1")));
-const Page2 = withRouter(lazy(() => import("../pages/Page2")));
+const Page1 = withNavigator(
+  lazy(() => import("../pages/Page1")),
+  "Page1"
+);
+const Page2 = withNavigator(
+  lazy(() => import("../pages/Page2")),
+  "Page2"
+);
 
 export default (function () {
   return [
-    //重定向
+    //登录页面
     {
-      path: "/",
-      element: <Navigate to="/main/tabpage1" />,
+      path: "/login",
+      component: Login,
+      name: "login",
     },
+    //404
     {
-      path: "/main",
-      element: <Navigate to="/main/tabpage1" />,
+      path: "/404",
+      component: NetFail,
+      name: "404",
     },
+    //首页
     {
-      path:'/',
-      element: <RouterController />,
+      path: "/*",
+      component: RouterController,
+      name: "app",
       children: [
         {
           path: "main",
-          element: <Main />,
+          component: Main,
+          name: "main",
           children: [
             {
               path: "tabpage1",
-              element: <TabPage1 />,
+              component: TabPage1,
+              name: "tabpage1",
             },
             {
               path: "tabpage2",
-              element: <TabPage2 />,
+              component: TabPage2,
+              name: "tabpage2",
             },
             {
               path: "tabpage3",
-              element: <TabPage3 />,
+              component: TabPage3,
+              name: "tabpage3",
             },
             {
               path: "tabpage4",
-              element: <TabPage4 />,
+              component: TabPage4,
+              name: "tabpage4",
             },
           ],
         },
         {
           path: "page1",
-          element: <Page1 />,
+          component: Page1,
+          name: "page1",
+          needDel: true,
         },
         {
           path: "page2",
-          element: <Page2 />,
-        }
-      ]
-    }
+          component: Page2,
+          name: "page2",
+          needDel: true,
+        },
+      ],
+    },
   ];
 })();
