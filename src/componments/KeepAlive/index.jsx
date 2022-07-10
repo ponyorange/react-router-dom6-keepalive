@@ -1,71 +1,102 @@
-import { useUpdate } from "../../hooks/useUpdate";
 import ReactDOM from "react-dom";
 import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
-
+import { useLocation } from "react-router-dom";
+/**
+ * 1、pop（页面回退）的时候删除上一页的缓存
+ * 1-1、路由变化的时候，哪些路由不需要删除
+ * 2、暴露方法给外部自己删除
+ * 有两个模式：
+ * 1、用黑白名单
+ * 2、pop自动删除缓存页面
+ * 什么参数都不传，则所有页面都缓存
+ * */
 function KeepAlive({
-  activeName,
-  children,
   exclude,
   include,
-  isAsyncInclude,
+  activeName,
+  children,
+  isPopDelete = false, //返回上一页的时候，删除当前页的缓存。否则不删除，直到超过最大缓存数
+  alwaysCacheRouts = [], //控制哪些路由总是缓存，应用场景：tabar对应的页面。在isPopDelete=true是生效
   maxLen = 10,
 }) {
+  if (include && exclude) {
+    exclude = undefined;
+    console.warn(
+      "白名单和黑名单同时存在时，只会使用白名单。也就是说黑名单将会被忽略。"
+    );
+  }
+  if (include || exclude) {
+    //优先使用黑白名单
+    isPopDelete = false;
+  }
+  const lastActiveComponent = useRef(null);
   const containerRef = useRef(null);
   const components = useRef([]);
-  const [asyncInclude] = useState(isAsyncInclude);
   const [stateComponets, setStateComponets] = useState(components.current);
-  const update = useUpdate();
+  const location = useLocation();
+  if (!activeName) {
+    activeName = location.pathname;
+  }
   useLayoutEffect(() => {
-    console.log(activeName);
-    if (!activeName) {
-      console.log("activeName");
-      return;
-    }
-    // 缓存超过上限的 干掉第一个缓存
+    // 缓存超过上限的 删除第一个缓存
     if (components.current.length >= maxLen) {
       components.current = components.current.slice(1);
     }
     // 添加
-    const component = components.current.find((res) => res.name === activeName);
+    let component = components.current.find((res) => res.name === activeName);
+    let isNeedCache = true; //默认全都缓存
+    if (include) {
+      isNeedCache = !!include.includes(activeName);
+    } else if (exclude) {
+      isNeedCache = !exclude.includes(activeName);
+    }
     if (!component) {
-      components.current = [
-        ...components.current,
-        {
-          name: activeName,
-          ele: children,
-        },
-      ];
-      if (!asyncInclude) {
-        update();
-      }
+      component = {
+        name: activeName,
+        ele: children,
+        isNeedCache,
+      };
+      components.current = [...components.current, component];
     } else {
       //找到了缓存的页面
       const pageIdx = components.current.indexOf(component) + 1;
       const pageLen = components.current.length;
-      if (pageIdx < pageLen) {
+      if (
+        pageIdx < pageLen &&
+        !alwaysCacheRouts.includes(lastActiveComponent.current.name) &&
+        isPopDelete
+      ) {
         //页面回退
         //把最后一个给删掉
-        components.current = components.current.slice(0, pageIdx);
+        components.current = components.current.slice(
+          0,
+          components.current.length - 1
+        );
+      }
+      //把不需要缓存的页面删掉
+      else if (lastActiveComponent.current) {
+        //把不需要缓存的页面删掉
+        if (!lastActiveComponent.current.isNeedCache) {
+          components.current = components.current.filter(
+            (item) => item !== lastActiveComponent.current
+          );
+        }
       }
     }
-    // console.log(components);
+
+    lastActiveComponent.current = component;
     setStateComponets(components.current);
-    return () => {
-      // 处理 黑白名单
-      if (!exclude && !include) {
-        return;
-      }
-      components.current = components.current.filter(({ name }) => {
-        if (exclude && exclude.includes(name)) {
-          return false;
-        }
-        if (include) {
-          return include.includes(name);
-        }
-        return true;
-      });
-    };
-  }, [children, activeName, exclude, maxLen, include, update, asyncInclude]);
+
+    return () => {};
+  }, [
+    children,
+    activeName,
+    maxLen,
+    alwaysCacheRouts,
+    isPopDelete,
+    exclude,
+    include,
+  ]);
 
   return (
     <>

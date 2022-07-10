@@ -74,13 +74,11 @@ export default (function () {
           path: "page1",
           component: Page1,
           name: "page1",
-          needDel: true,
         },
         {
           path: "page2",
           component: Page2,
           name: "page2",
-          needDel: true,
         },
       ],
     },

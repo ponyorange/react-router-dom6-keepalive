@@ -67,11 +67,23 @@ function RouterController(props) {
       selectedKeys,
     };
   }, [ele]);
+
+  const alwaysCacheRouts = useMemo(
+    () => [
+      "/main/tabpage4",
+      "/main/tabpage3",
+      "/main/tabpage2",
+      "/main/tabpage1",
+    ],
+    []
+  );
+  const inclueRouts = useMemo(() => ["/main/tabpage2", "/main/tabpage1"], []);
+  const exclueRouts = useMemo(() => ["/main/tabpage3", "/main/tabpage4"], []);
   return (
     <>
       <Suspense fallback={<RouteLoading />}>
         {matchRouteObj ? (
-          <KeepAlive activeName={matchRouteObj?.key} isAsyncInclude>
+          <KeepAlive alwaysCacheRouts={alwaysCacheRouts} isPopDelete={true}>
             {ele}
           </KeepAlive>
         ) : (
