@@ -21,7 +21,6 @@ function KeepAlive({
   isPopDelete = false, //返回上一页的时候，删除当前页的缓存。否则不删除，直到超过最大缓存数
   alwaysCacheRouts = [], //控制哪些路由总是缓存，应用场景：tabar对应的页面。在isPopDelete=true时生效
   maxLen = 10,
-  onPageShow, //页面显示调用
 }) {
   if (include && exclude) {
     exclude = undefined;

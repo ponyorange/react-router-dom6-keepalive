@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# 基于react- router-dom6的路由缓存
+##安装
+###`npm i react-router-dom6-keepalive`
+##导入
+```js
+import KeepAlive from "react-router-dom6-keepalive"
+```
+##使用方法
+###h5形式
+```js
+import KeepAlive from "react-router-dom6-keepalive"
+//路由配置
+const routeElements = useRoutes(routes);
+//配置tabBar页面，tabBar页面会一直缓存，pop它也不会销毁。其它页面pop后就会销毁。达到类似微信小程序的路由效果。
+const alwaysCacheRouts = useMemo(
+  () => [
+    "/main/tabpage4",
+    "/main/tabpage3",
+    "/main/tabpage2",
+    "/main/tabpage1",
+  ],
+  []
+);
+<Router>
+    <Suspense fallback={<RouteLoading />}>
+      <div className="App">
+        <KeepAlive isPopDelete={true}
+                   alwaysCacheRouts={alwaysCacheRouts}>
+          {routeElements}
+        </KeepAlive>
+      </div>
+    </Suspense>
+</Router>
+```
+####效果：
+![image](https://github.com/ponyorange/react-router-dom6-keepalive/blob/master/demoGif/h5.GIF?raw=true)
+##管理端Admin形式
+```js
+import KeepAlive from "react-router-dom6-keepalive"
+//路由配置
+const routeElements = useRoutes(routes);
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<Router>
+    <Suspense fallback={<RouteLoading />}>
+      <div className="App">
+        <KeepAlive maxLen={10}>
+          {routeElements}
+        </KeepAlive>
+      </div>
+    </Suspense>
+</Router>
+```
+```
+参数说明： 
+maxLen -- 最大缓存上线，超过就会删除第一个缓存
+exclude -- 黑名单路由。配置哪些页面不需要缓存，除此之外所以页面都缓存。
+include -- 白名单路由。配置哪些页面需要缓存，除此之外所以页面都不缓存。
 
-## Available Scripts
+###！！注意！！###
+1、不配置黑白名单默认所有路由都缓存。
+2、黑白名单只能配置其中一个，两个都配置了默认使用白名单。
+```
+####效果：
+![image](https://github.com/ponyorange/react-router-dom6-keepalive/blob/master/demoGif/admin.GIF?raw=true)
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+###生命周期使用
+####导入
+```js
+//在需要使用生命周期的页面导入，如监听某个缓存页面的显示和隐藏。
+import { onPageHiden, onPageShow } from "../../componments/KeepAlive";
+```
+####使用
+```js
+//当前页面的路由
+const pathName = useLocation().pathname;;
+useEffect(() => {
+  onPageShow(pathName, () => {
+    console.log(pathName, "显示了");
+  });
+  onPageHiden(pathName, () => {
+    console.log(pathName, "隐藏了");
+  });
+}, []);
+```
+###参数说明：
+```
+  exclude -- 路由黑名单，isPopDelete = false生效。
+  include -- 路由白名单，isPopDelete = false生效。
+  activeName -- 当前展示的是哪个路由。默认使用当前页面路由，大多数情况下不用传。
+  isPopDelete -- 返回上一页时是否删除当前页面缓存。默认false
+  alwaysCacheRouts -- 配置总是缓存的页面。isPopDelete = true生效。
+  maxLen -- 最大缓存上限。
+```
