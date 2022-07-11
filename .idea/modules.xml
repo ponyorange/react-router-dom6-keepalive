@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/react-wxrouter.iml" filepath="$PROJECT_DIR$/.idea/react-wxrouter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/react-router-dom6-keepalive.iml" filepath="$PROJECT_DIR$/.idea/react-router-dom6-keepalive.iml" />
     </modules>
   </component>
 </project>
