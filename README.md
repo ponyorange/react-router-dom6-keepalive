@@ -1,12 +1,12 @@
 # 基于react- router-dom6的路由缓存
-##安装
+## 安装
 ###`npm i react-router-dom6-keepalive`
-##导入
+## 导入
 ```js
 import KeepAlive from "react-router-dom6-keepalive"
 ```
-##使用方法
-###h5形式
+## 使用方法
+### h5形式
 ```js
 import KeepAlive from "react-router-dom6-keepalive"
 //路由配置
@@ -32,9 +32,9 @@ const alwaysCacheRouts = useMemo(
     </Suspense>
 </Router>
 ```
-####效果：
+#### 效果：
 ![image](https://github.com/ponyorange/react-router-dom6-keepalive/blob/master/demoGif/h5.GIF?raw=true)
-##管理端Admin形式
+## 管理端Admin形式
 ```js
 import KeepAlive from "react-router-dom6-keepalive"
 //路由配置
@@ -60,16 +60,16 @@ include -- 白名单路由。配置哪些页面需要缓存，除此之外所以
 1、不配置黑白名单默认所有路由都缓存。
 2、黑白名单只能配置其中一个，两个都配置了默认使用白名单。
 ```
-####效果：
+#### 效果：
 ![image](https://github.com/ponyorange/react-router-dom6-keepalive/blob/master/demoGif/admin.GIF?raw=true)
 
-###生命周期使用
-####导入
+### 生命周期使用
+#### 导入
 ```js
 //在需要使用生命周期的页面导入，如监听某个缓存页面的显示和隐藏。
 import { onPageHiden, onPageShow } from "../../componments/KeepAlive";
 ```
-####使用
+#### 使用
 ```js
 //当前页面的路由
 const pathName = useLocation().pathname;;
@@ -82,7 +82,7 @@ useEffect(() => {
   });
 }, []);
 ```
-###参数说明：
+### 参数说明：
 ```
   exclude -- 路由黑名单，isPopDelete = false生效。
   include -- 路由白名单，isPopDelete = false生效。
