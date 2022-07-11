@@ -10,14 +10,18 @@ import { useLocation } from "react-router-dom";
  * 2、pop自动删除缓存页面
  * 什么参数都不传，则所有页面都缓存
  * */
+const pageShowFuns = []; //*表示所有页面都会
+const pageHidenFuns = [];
+let lastActiveName = undefined;
 function KeepAlive({
   exclude,
   include,
   activeName,
   children,
   isPopDelete = false, //返回上一页的时候，删除当前页的缓存。否则不删除，直到超过最大缓存数
-  alwaysCacheRouts = [], //控制哪些路由总是缓存，应用场景：tabar对应的页面。在isPopDelete=true是生效
+  alwaysCacheRouts = [], //控制哪些路由总是缓存，应用场景：tabar对应的页面。在isPopDelete=true时生效
   maxLen = 10,
+  onPageShow, //页面显示调用
 }) {
   if (include && exclude) {
     exclude = undefined;
@@ -104,6 +108,7 @@ function KeepAlive({
       {stateComponets.map(({ name, ele }) => (
         <Component
           active={name === activeName}
+          activeName={activeName}
           renderDiv={containerRef}
           name={name}
           key={name}
@@ -117,14 +122,27 @@ function KeepAlive({
 export default memo(KeepAlive);
 
 // 渲染当前匹配的路由 不匹配的 利用createPortal 移动到 document.createElement('div') 里面
-function Component({ active, children, name, renderDiv }) {
-  // console.log("name===", name);
+function Component({ active, children, name, renderDiv, activeName }) {
   const [targetElement] = useState(() => document.createElement("div"));
   const activatedRef = useRef(false);
   activatedRef.current = activatedRef.current || active;
   useEffect(() => {
+    // 渲染匹配的组件,执行页面显示hook
     if (active) {
-      // 渲染匹配的组件
+      //执行页面隐藏钩子
+      pageHidenFuns.forEach((item) => {
+        if (item.activeName === lastActiveName) {
+          item.callBack();
+        }
+      });
+      // 执行页面显示钩子
+      pageShowFuns.forEach((item) => {
+        if (item.activeName === activeName || item.activeName === "*") {
+          item.callBack();
+        }
+      });
+      //改变上一次页面
+      lastActiveName = activeName;
       renderDiv.current.appendChild(targetElement);
     } else {
       try {
@@ -132,7 +150,7 @@ function Component({ active, children, name, renderDiv }) {
         renderDiv.current.removeChild(targetElement);
       } catch (e) {}
     }
-  }, [active, name, renderDiv, targetElement]);
+  }, [activeName, active, name, renderDiv, targetElement]);
   useEffect(() => {
     // 添加一个id 作为标识 并没有什么太多作用
     targetElement.setAttribute("id", name);
@@ -145,3 +163,29 @@ function Component({ active, children, name, renderDiv }) {
   );
 }
 export const KeepAliveComponent = memo(Component);
+
+export const onPageShow = function (activeName, callBack) {
+  if (pageShowFuns.some((item) => item.activeName === activeName)) {
+    //提示使用第一个
+    console.warn(
+      "你已经注册了",
+      activeName,
+      "pageShow,默认使用第一个，请注意调用"
+    );
+  } else {
+    pageShowFuns.push({ activeName, callBack });
+  }
+};
+
+export const onPageHiden = function (activeName, callBack) {
+  if (pageHidenFuns.some((item) => item.activeName === activeName)) {
+    //提示使用第一个
+    console.warn(
+      "你已经注册了",
+      activeName,
+      "pageHiden,默认使用第一个，请注意调用"
+    );
+  } else {
+    pageHidenFuns.push({ activeName, callBack });
+  }
+};

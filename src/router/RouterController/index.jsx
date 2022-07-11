@@ -79,11 +79,18 @@ function RouterController(props) {
   );
   const inclueRouts = useMemo(() => ["/main/tabpage2", "/main/tabpage1"], []);
   const exclueRouts = useMemo(() => ["/main/tabpage3", "/main/tabpage4"], []);
+  const onPageShow = (next, pre) => {
+    console.log(next, pre);
+  };
   return (
     <>
       <Suspense fallback={<RouteLoading />}>
         {matchRouteObj ? (
-          <KeepAlive alwaysCacheRouts={alwaysCacheRouts} isPopDelete={true}>
+          <KeepAlive
+            alwaysCacheRouts={alwaysCacheRouts}
+            isPopDelete={true}
+            onPageShow={onPageShow}
+          >
             {ele}
           </KeepAlive>
         ) : (

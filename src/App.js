@@ -1,14 +1,21 @@
 import "./App.css";
 import routes from "./router";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 //页面显示前loading
 import RouteLoading from "./componments/RouteLoading";
+import { onPageShow } from "./componments/KeepAlive";
 
 export default function App() {
   // const routeElements = useRoutes(routes);
   // const route = routes[0];
+  const location = useLocation();
+  useEffect(() => {
+    onPageShow("*", () => {
+      console.log(location.pathname);
+    });
+  }, []);
   return (
     // <div className="App">
     <Suspense fallback={<RouteLoading />}>
