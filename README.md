@@ -1,6 +1,6 @@
 # 基于react- router-dom6的路由缓存
 ## 安装
-###`npm i react-router-dom6-keepalive`
+### `npm i react-router-dom6-keepalive`
 ## 导入
 ```js
 import KeepAlive from "react-router-dom6-keepalive"
