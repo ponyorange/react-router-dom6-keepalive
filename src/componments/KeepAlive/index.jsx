@@ -10,9 +10,11 @@ import { useLocation } from "react-router-dom";
  * 2、pop自动删除缓存页面
  * 什么参数都不传，则所有页面都缓存
  * */
-const pageShowFuns = []; //*表示所有页面都会
-const pageHidenFuns = [];
-let lastActiveName = undefined;
+const __KeepAliveArgs__ = {
+  pageShowFuns: [], //页面显示钩子，*代表所有。
+  pageHidenFuns: [], //页面隐藏钩子
+  lastActiveName: undefined, //上一次显示的页面路由
+};
 function KeepAlive({
   exclude,
   include,
@@ -129,19 +131,19 @@ function Component({ active, children, name, renderDiv, activeName }) {
     // 渲染匹配的组件,执行页面显示hook
     if (active) {
       //执行页面隐藏钩子
-      pageHidenFuns.forEach((item) => {
-        if (item.activeName === lastActiveName) {
+      __KeepAliveArgs__.pageHidenFuns.forEach((item) => {
+        if (item.activeName === __KeepAliveArgs__.lastActiveName) {
           item.callBack();
         }
       });
       // 执行页面显示钩子
-      pageShowFuns.forEach((item) => {
+      __KeepAliveArgs__.pageShowFuns.forEach((item) => {
         if (item.activeName === activeName || item.activeName === "*") {
           item.callBack();
         }
       });
       //改变上一次页面
-      lastActiveName = activeName;
+      __KeepAliveArgs__.lastActiveName = activeName;
       renderDiv.current.appendChild(targetElement);
     } else {
       try {
@@ -164,7 +166,11 @@ function Component({ active, children, name, renderDiv, activeName }) {
 export const KeepAliveComponent = memo(Component);
 
 export const onPageShow = function (activeName, callBack) {
-  if (pageShowFuns.some((item) => item.activeName === activeName)) {
+  if (
+    __KeepAliveArgs__.pageShowFuns.some(
+      (item) => item.activeName === activeName
+    )
+  ) {
     //提示使用第一个
     console.warn(
       "你已经注册了",
@@ -172,12 +178,16 @@ export const onPageShow = function (activeName, callBack) {
       "pageShow,默认使用第一个，请注意调用"
     );
   } else {
-    pageShowFuns.push({ activeName, callBack });
+    __KeepAliveArgs__.pageShowFuns.push({ activeName, callBack });
   }
 };
 
 export const onPageHiden = function (activeName, callBack) {
-  if (pageHidenFuns.some((item) => item.activeName === activeName)) {
+  if (
+    __KeepAliveArgs__.pageHidenFuns.some(
+      (item) => item.activeName === activeName
+    )
+  ) {
     //提示使用第一个
     console.warn(
       "你已经注册了",
@@ -185,6 +195,6 @@ export const onPageHiden = function (activeName, callBack) {
       "pageHiden,默认使用第一个，请注意调用"
     );
   } else {
-    pageHidenFuns.push({ activeName, callBack });
+    __KeepAliveArgs__.pageHidenFuns.push({ activeName, callBack });
   }
 };
