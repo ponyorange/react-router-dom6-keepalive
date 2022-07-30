@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 /**
  * 1、pop（页面回退）的时候删除上一页的缓存
  * 1-1、路由变化的时候，哪些路由不需要删除
@@ -56,7 +56,6 @@ function _KeepAliveComponent({
       });
       //改变上一次页面
       __ORANGE__KeepAliveArgs__ORANGE__.lastActiveName = activeName;
-      // console.log("targetElement===", targetElement.children[0]);
       renderDiv.current.appendChild(targetElement);
       // renderDiv.current.appendChild(targetElement.children[0]);
     } else {
@@ -109,8 +108,15 @@ function KeepAlive({
   if (!activeName) {
     activeName = location.pathname;
   }
+  /**
+   * 如果是重定向，直接重定向，不需要缓存
+   * 这里不能用type.name 判断组件是否是Navigate，因为生产版编译后type.name 都是t
+   * */
+  const navEle = <Navigate to="/" />;
+
   useLayoutEffect(() => {
-    if (children.props.children.type.name === "Navigate") return;
+    if (!children) return;
+    if (navEle.type === children.props.children.type) return;
     // 缓存超过上限的 删除第一个缓存
     if (components.current.length >= maxLen) {
       components.current = components.current.slice(1);
@@ -172,7 +178,8 @@ function KeepAlive({
 
   //滚动到上次离开到位置
   useEffect(() => {
-    if (children.props.children.type.name === "Navigate") return;
+    if (!children) return;
+    if (navEle.type === children.props.children.type) return;
     const component = components.current.find((res) => res.name === activeName);
     if (component) {
       const lastEle = containerRef.current;
@@ -183,24 +190,28 @@ function KeepAlive({
     }
   }, [children]);
 
-  return children.props.children.type.name === "Navigate" ? (
-    <>{children}</>
-  ) : (
-    <>
-      <div ref={containerRef} />
-      {stateComponets.map(({ name, ele }) => (
-        <KeepAliveComponent
-          active={name === activeName}
-          activeName={activeName}
-          renderDiv={containerRef}
-          name={name}
-          key={name}
-        >
-          {ele}
-        </KeepAliveComponent>
-      ))}
-    </>
-  );
+  if (!children) {
+    return <></>;
+  } else if (navEle.type === children.props.children.type) {
+    return <>{children}</>;
+  } else {
+    return (
+      <>
+        <div ref={containerRef} />
+        {stateComponets.map(({ name, ele }) => (
+          <KeepAliveComponent
+            active={name === activeName}
+            activeName={activeName}
+            renderDiv={containerRef}
+            name={name}
+            key={name}
+          >
+            {ele}
+          </KeepAliveComponent>
+        ))}
+      </>
+    );
+  }
 }
 export default memo(KeepAlive);
 

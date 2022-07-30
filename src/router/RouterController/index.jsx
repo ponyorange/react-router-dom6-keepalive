@@ -13,11 +13,12 @@ function makeRouteObject(routes, dispatch) {
         path: route.path,
         name: route.name,
         meta: route.meta,
-        element: (
-          <ViewProvider value={{ name: route.name }}>
-            <route.component name={route.name} dispatch={dispatch} />
-          </ViewProvider>
-        ),
+        element: <Navigate to="/" />,
+        // element: (
+        //   <ViewProvider value={{ name: route.name }}>
+        //     <route.component name={route.name} dispatch={dispatch} />
+        //   </ViewProvider>
+        // ),
         children: route.children
           ? makeRouteObject(route.children, dispatch)
           : undefined,
