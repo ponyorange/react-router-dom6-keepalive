@@ -1,24 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import "./index.scss";
 
-import { onPageHiden, onPageShow } from "../../componments/KeepAlive";
-import { useLocation } from "react-router-dom";
-
 const TabPage2 = function () {
-  const location = useLocation();
-  const pathName = location.pathname;
-  useEffect(() => {
-    onPageShow(pathName, () => {
-      console.log(pathName, "显示了");
-    });
-    onPageHiden(pathName, () => {
-      console.log(pathName, "隐藏了");
-    });
-  }, []);
+  const rows = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+  ];
+  const containerDiv = useRef(null);
+  useEffect(() => {}, []);
   return (
-    <div className="tabpage2">
+    <div className="tabpage2" ref={containerDiv}>
       TabPage2
       <input />
+      {rows.map((row) => (
+        <div style={{ height: "50px" }} key={row}>
+          {row}
+        </div>
+      ))}
     </div>
   );
 };

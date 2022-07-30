@@ -2,7 +2,7 @@ import React, { Suspense, useMemo } from "react";
 import RouteLoading from "../../componments/RouteLoading";
 import KeepAlive from "../../componments/KeepAlive";
 import { ViewProvider } from "../../hooks/useView";
-import { useRoutes } from "react-router-dom";
+import { useRoutes, Navigate } from "react-router-dom";
 import NetFail from "../../pages/404";
 
 //生成路由对象数组

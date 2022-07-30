@@ -36,8 +36,6 @@ function _KeepAliveComponent({
   const activatedRef = useRef(false);
   activatedRef.current = activatedRef.current || active;
   useEffect(() => {
-    if (name === __ORANGE__KeepAliveArgs__ORANGE__.lastActiveName) {
-    }
     // 渲染匹配的组件,执行页面显示hook
     if (active) {
       //执行页面隐藏钩子
@@ -56,9 +54,7 @@ function _KeepAliveComponent({
       });
       //改变上一次页面
       __ORANGE__KeepAliveArgs__ORANGE__.lastActiveName = activeName;
-      // console.log("targetElement===", targetElement.children[0]);
       renderDiv.current.appendChild(targetElement);
-      // renderDiv.current.appendChild(targetElement.children[0]);
     } else {
       try {
         // 移除不渲染的组件
@@ -69,9 +65,6 @@ function _KeepAliveComponent({
   useEffect(() => {
     // 添加一个id 作为标识 并没有什么太多作用
     targetElement.setAttribute("id", name);
-    //添加页面style
-    // targetElement.setAttribute("style", "width: 100%; height: 100%;");
-    // targetElement.children[0].scrollBy(0, 100);
   }, [name, targetElement]);
   // 把vnode 渲染到document.createElement('div') 里面
   return (
@@ -110,7 +103,6 @@ function KeepAlive({
     activeName = location.pathname;
   }
   useLayoutEffect(() => {
-    if (children.props.children.type.name === "Navigate") return;
     // 缓存超过上限的 删除第一个缓存
     if (components.current.length >= maxLen) {
       components.current = components.current.slice(1);
@@ -128,7 +120,6 @@ function KeepAlive({
         name: activeName,
         ele: children,
         isNeedCache,
-        scrollTop: 0,
       };
       components.current = [...components.current, component];
     } else {
@@ -160,6 +151,8 @@ function KeepAlive({
 
     lastActiveComponent.current = component;
     setStateComponets(components.current);
+
+    return () => {};
   }, [
     children,
     activeName,
@@ -170,24 +163,9 @@ function KeepAlive({
     include,
   ]);
 
-  //滚动到上次离开到位置
-  useEffect(() => {
-    if (children.props.children.type.name === "Navigate") return;
-    const component = components.current.find((res) => res.name === activeName);
-    if (component) {
-      const lastEle = containerRef.current;
-      document.getElementsByTagName("html")[0].scrollTop = component.scrollTop;
-      return () => {
-        component.scrollTop = -lastEle.getBoundingClientRect().top;
-      };
-    }
-  }, [children]);
-
-  return children.props.children.type.name === "Navigate" ? (
-    <>{children}</>
-  ) : (
+  return (
     <>
-      <div ref={containerRef} />
+      <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
       {stateComponets.map(({ name, ele }) => (
         <KeepAliveComponent
           active={name === activeName}

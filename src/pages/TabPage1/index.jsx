@@ -10,6 +10,7 @@ class TabPage1 extends Component {
     };
   }
   gotopage1 = () => {
+    console.log("gotopage1");
     this.props.navigate("/page1");
   };
   inputChange = (e) => {
