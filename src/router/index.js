@@ -2,6 +2,7 @@ import { lazy } from "react";
 
 import withRouter from "./withRouter"; //给组件包装路由
 import withNavigator from "./withNavigator";
+// import TabPage1 from "../pages/TabPage1";
 
 //一级路由
 const Login = lazy(() => import("../pages/Login"));
@@ -52,6 +53,13 @@ export default (function () {
               path: "tabpage1",
               component: TabPage1,
               name: "tabpage1",
+              children: [
+                {
+                  path: "page1",
+                  component: Page1,
+                  name: "page1",
+                },
+              ],
             },
             {
               path: "tabpage2",

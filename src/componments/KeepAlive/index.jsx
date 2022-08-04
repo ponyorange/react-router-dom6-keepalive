@@ -109,14 +109,28 @@ function KeepAlive({
     activeName = location.pathname;
   }
   /**
-   * 如果是重定向，直接重定向，不需要缓存
+   * 判断一些不需要缓存的组件，比如重定向，直接重定向，不需要缓存
    * 这里不能用type.name 判断组件是否是Navigate，因为生产版编译后type.name 都是t
    * */
-  const navEle = <Navigate to="/" />;
+  const isNoNeedCacheElement = () => {
+    const navEle = <Navigate to="/" />;
+    if (!children) return true;
+    else if (navEle.type === children.props.children.type) return true;
+    else if (children.props.value.outlet) {
+      if (navEle.type === children.props.value.outlet.props.children.type)
+        return true;
+      else if (
+        children.props.value.outlet.props.value.outlet &&
+        navEle.type ===
+          children.props.value.outlet.props.value.outlet.props.children.type
+      )
+        return true;
+    } else return false;
+  };
 
   useLayoutEffect(() => {
     if (!children) return;
-    if (navEle.type === children.props.children.type) return;
+    if (isNoNeedCacheElement()) return;
     // 缓存超过上限的 删除第一个缓存
     if (components.current.length >= maxLen) {
       components.current = components.current.slice(1);
@@ -179,7 +193,7 @@ function KeepAlive({
   //滚动到上次离开到位置
   useEffect(() => {
     if (!children) return;
-    if (navEle.type === children.props.children.type) return;
+    if (isNoNeedCacheElement()) return;
     const component = components.current.find((res) => res.name === activeName);
     if (component) {
       const lastEle = containerRef.current;
@@ -192,7 +206,7 @@ function KeepAlive({
 
   if (!children) {
     return <></>;
-  } else if (navEle.type === children.props.children.type) {
+  } else if (isNoNeedCacheElement()) {
     return <>{children}</>;
   } else {
     return (

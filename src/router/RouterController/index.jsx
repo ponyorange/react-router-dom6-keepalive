@@ -9,20 +9,32 @@ import NetFail from "../../pages/404";
 function makeRouteObject(routes, dispatch) {
   if (routes) {
     return routes.map((route) => {
-      return {
-        path: route.path,
-        name: route.name,
-        meta: route.meta,
-        element: <Navigate to="/" />,
-        // element: (
-        //   <ViewProvider value={{ name: route.name }}>
-        //     <route.component name={route.name} dispatch={dispatch} />
-        //   </ViewProvider>
-        // ),
-        children: route.children
-          ? makeRouteObject(route.children, dispatch)
-          : undefined,
-      };
+      if (route.path === "tabpage4") {
+        return {
+          path: route.path,
+          name: route.name,
+          meta: route.meta,
+          element: <Navigate to="/main/tabpage1" />,
+          children: route.children
+            ? makeRouteObject(route.children, dispatch)
+            : undefined,
+        };
+      } else {
+        return {
+          path: route.path,
+          name: route.name,
+          meta: route.meta,
+          // element: <Navigate to="/" />,
+          element: (
+            // <ViewProvider value={{ name: route.name }}>
+            <route.component name={route.name} dispatch={dispatch} />
+            // {/*</ViewProvider>*/}
+          ),
+          children: route.children
+            ? makeRouteObject(route.children, dispatch)
+            : undefined,
+        };
+      }
     });
   }
 }
@@ -45,6 +57,7 @@ function RouterController(props) {
     }
     return [];
   }, [route?.children]);
+  // console.log(routeObject);
   // 匹配 当前路径要渲染的路由
   const ele = useRoutes(routeObject);
   // 计算 匹配的路由name

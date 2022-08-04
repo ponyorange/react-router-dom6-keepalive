@@ -131,7 +131,7 @@ exports default routes
 ```
 RequireAuth组件可能会返回一个重定向组件，这样配置路由，路由缓存时会导致无限重定向。
 
-可以把路由鉴权逻辑放到toure.js，保证传给路由缓存组件内部没有重定向可能。如：
+可以把路由鉴权逻辑放到route.js，保证传给路由缓存组件内部没有重定向可能。如：
 ```js
 import { isAuth } from "../../utils/auth";
 

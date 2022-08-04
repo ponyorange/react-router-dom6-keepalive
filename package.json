@@ -1,6 +1,6 @@
 {
   "name": "react-router-dom6-keepalive",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": false,
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -11,7 +11,7 @@
     "react-router-keepalive",
     "react-keepalive"
   ],
-  "homepage": "https://github.com/ponyorange/react-wxrouter",
+  "homepage": "https://orange.seeyouweb.com/orgui/?path=/story/others-routecache--page",
   "repository": {
     "type": "git",
     "url": "https://github.com/ponyorange/react-wxrouter"

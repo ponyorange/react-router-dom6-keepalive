@@ -12,6 +12,7 @@ class TabPage1 extends Component {
   gotopage1 = () => {
     console.log("gotopage1");
     this.props.navigate("/page1");
+    // this.props.navigate("/main/tabpage1/page1");
   };
   inputChange = (e) => {
     this.setState({
@@ -32,8 +33,8 @@ class TabPage1 extends Component {
   render() {
     return (
       <>
-        <Outlet />
         <div className="tabpage1">
+          <Outlet />
           TabPage1
           <div onClick={this.gotopage1}>点我去page1</div>
           <input value={this.state.inputVal} onChange={this.inputChange} />
