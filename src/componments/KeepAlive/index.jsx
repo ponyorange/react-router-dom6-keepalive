@@ -49,7 +49,7 @@ function _KeepAliveComponent({
         )
       : ReactDOM.createPortal(children, targetElement.current, name)
   );
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (name === __ORANGE__KeepAliveArgs__ORANGE__.lastActiveName) {
     }
     // 渲染匹配的组件,执行页面显示hook
