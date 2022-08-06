@@ -22,14 +22,14 @@ const alwaysCacheRouts = useMemo(
   []
 );
 <Router>
-    <Suspense fallback={<RouteLoading />}>
-      <div className="App">
-        <KeepAlive isPopDelete={true}
-                   alwaysCacheRouts={alwaysCacheRouts}>
-          {routeElements}
-        </KeepAlive>
-      </div>
-    </Suspense>
+  <div className="App">
+    <KeepAlive isPopDelete={true}
+               alwaysCacheRouts={alwaysCacheRouts}
+               isNeedSuspense
+               SuspenseLoading={<RouteLoading />}>
+      {routeElements}
+    </KeepAlive>
+  </div>
 </Router>
 ```
 #### 效果：
@@ -41,13 +41,14 @@ import KeepAlive from "react-router-dom6-keepalive"
 const routeElements = useRoutes(routes);
 
 <Router>
-    <Suspense fallback={<RouteLoading />}>
-      <div className="App">
-        <KeepAlive maxLen={10}>
-          {routeElements}
-        </KeepAlive>
-      </div>
-    </Suspense>
+  <div className="App">
+    <KeepAlive maxLen={10} 
+               isNeedSuspense 
+               SuspenseLoading={<RouteLoading />}
+               exclude={['/path1','/path2']}>
+      {routeElements}
+    </KeepAlive>
+  </div>
 </Router>
 ```
 ```
@@ -67,7 +68,7 @@ include -- 白名单路由。配置哪些页面需要缓存，除此之外所以
 #### 导入
 ```js
 //在需要使用生命周期的页面导入，如监听某个缓存页面的显示和隐藏。
-import { onPageHiden, onPageShow } from "../../componments/KeepAlive";
+import { onPageHiden, onPageShow } from "react-router-dom6-keepalive";
 ```
 #### 使用
 ```js
@@ -82,7 +83,15 @@ useEffect(() => {
   });
 }, []);
 ```
-### 参数说明：
+#### 移除钩子
+```js
+import { removeKeeAliveHook } from "react-router-dom6-keepalive";
+removeKeeAliveHook(pathname,type);
+//参数说明：
+//pathname -- 哪个页面的生命周期，如'/path1'，
+//type -- 那种类型的钩子，可选："show"、"hiden"。默认："show"
+```
+### KeepAlive 参数说明：
 ```
   exclude -- 路由黑名单，isPopDelete = false生效。
   include -- 路由白名单，isPopDelete = false生效。
@@ -90,10 +99,12 @@ useEffect(() => {
   isPopDelete -- 返回上一页时是否删除当前页面缓存。默认false
   alwaysCacheRouts -- 配置总是缓存的页面。isPopDelete = true生效。
   maxLen -- 最大缓存上限。
+  isNeedSuspense -- 是否需要处理路由懒加载，默认false。
+  SuspenseLoading -- 处理路由懒加载时对应的loading，默认<div>loading</div>。
 ```
 ## 注意事项：
 
-！！！不要传入内部带有重定向逻辑判断的组件，这样会导致无限重定向。！！！
+* #### 1、不要传入内部带有重定向逻辑判断的组件，这样会导致无限重定向。
 
 比如你想做路由鉴权，可能你会写一个鉴权的高阶组件，如下：RequireAuth.jsx
 
@@ -146,4 +157,29 @@ const routes=[
 ]
 exports default routes
 ```
+* #### 2、如果你使用了路由懒加载，外部不需要嵌套Suspense组件了，给keepAlive组件传入isNeedSuspense={true}即可，keepAlive组件会处理路由懒加载。如：
+```js
+//正确示例 😊
+<KeepAlive
+          alwaysCacheRouts={alwaysCacheRouts}
+          isPopDelete={true}
+          isNeedSuspense
+          SuspenseLoading={<RouteLoading />}
+        >
+          {RouteEle}
+</KeepAlive>
+```
 
+```js
+//错误示例 ❌
+<Suspense fallback={<RouteLoading />}>
+  <KeepAlive
+    alwaysCacheRouts={alwaysCacheRouts}
+    isPopDelete={true}
+    isNeedSuspense
+    SuspenseLoading={<RouteLoading />}
+  >
+    {RouteEle}
+  </KeepAlive>
+</Suspense>
+```

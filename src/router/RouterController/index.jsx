@@ -1,7 +1,6 @@
-import React, { Suspense, useMemo } from "react";
+import React, { useMemo } from "react";
 import RouteLoading from "../../componments/RouteLoading";
 import KeepAlive from "../../componments/KeepAlive";
-import { ViewProvider } from "../../hooks/useView";
 import { useRoutes, Navigate } from "react-router-dom";
 import NetFail from "../../pages/404";
 
@@ -24,6 +23,7 @@ function makeRouteObject(routes, dispatch) {
           path: route.path,
           name: route.name,
           meta: route.meta,
+          key: route.path,
           // element: <Navigate to="/" />,
           element: (
             // <ViewProvider value={{ name: route.name }}>
@@ -91,27 +91,25 @@ function RouterController(props) {
     ],
     []
   );
-  const inclueRouts = useMemo(() => ["/main/tabpage2", "/main/tabpage1"], []);
-  const exclueRouts = useMemo(() => ["/main/tabpage3", "/main/tabpage4"], []);
-  const onPageShow = (next, pre) => {
-    console.log(next, pre);
-  };
+  // console.log("outer==", ele);
   return (
     <>
-      <Suspense fallback={<RouteLoading />}>
-        {matchRouteObj ? (
-          <KeepAlive
-            alwaysCacheRouts={alwaysCacheRouts}
-            isPopDelete={true}
-            onPageShow={onPageShow}
-          >
-            {ele}
-          </KeepAlive>
-        ) : (
-          //路由匹配不到，去404页面
-          <NetFail />
-        )}
-      </Suspense>
+      {/*<ORSuspense fallback={<RouteLoading />}>*/}
+      {/*  <div>{Date.now()}</div>*/}
+      {matchRouteObj ? (
+        <KeepAlive
+          alwaysCacheRouts={alwaysCacheRouts}
+          isPopDelete={true}
+          isNeedSuspense
+          SuspenseLoading={<RouteLoading />}
+        >
+          {ele}
+        </KeepAlive>
+      ) : (
+        //路由匹配不到，去404页面
+        <NetFail />
+      )}
+      {/*</ORSuspense>*/}
     </>
   );
 }

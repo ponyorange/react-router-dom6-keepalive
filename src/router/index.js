@@ -3,13 +3,18 @@ import { lazy } from "react";
 import withRouter from "./withRouter"; //给组件包装路由
 import withNavigator from "./withNavigator";
 // import TabPage1 from "../pages/TabPage1";
+// import Page1 from "../pages/Page1";
 
 //一级路由
-const Login = lazy(() => import("../pages/Login"));
-const NetFail = lazy(() => import("../pages/404"));
-const RouterController = lazy(() => import("./RouterController"));
+// const Login = lazy(() => import("../pages/Login"));
+// const NetFail = lazy(() => import("../pages/404"));
+// const RouterController = lazy(() => import("./RouterController"));
+import Login from "../pages/Login";
+import NetFail from "../pages/404";
+import RouterController from "./RouterController";
 //二级路由
-const Main = lazy(() => import("../pages/Main"));
+// const Main = lazy(() => import("../pages/Main"));
+import Main from "../pages/Main";
 const TabPage1 = withRouter(lazy(() => import("../pages/TabPage1")));
 const TabPage2 = withRouter(lazy(() => import("../pages/TabPage2")));
 const TabPage3 = withRouter(lazy(() => import("../pages/TabPage3")));
@@ -19,6 +24,9 @@ const Page1 = withNavigator(
   lazy(() => import("../pages/Page1")),
   "Page1"
 );
+
+// const Page1No = withNavigator(Page1);
+
 const Page2 = withNavigator(
   lazy(() => import("../pages/Page2")),
   "Page2"

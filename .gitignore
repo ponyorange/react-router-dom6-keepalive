@@ -11,6 +11,7 @@
 # production
 /build
 /dist
+/bat
 
 # misc
 .DS_Store

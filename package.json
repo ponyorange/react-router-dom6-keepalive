@@ -1,6 +1,6 @@
 {
   "name": "react-router-dom6-keepalive",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "private": false,
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -62,7 +62,6 @@
     "@testing-library/user-event": "^13.5.0",
     "antd-mobile": "^5.15.1",
     "prop-types": "^15.8.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "react-scripts": "5.0.1"
   }
 }

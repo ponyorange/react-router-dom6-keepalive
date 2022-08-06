@@ -13,7 +13,7 @@ export default function Main() {
   const location = useLocation();
   const navigate = useNavigate();
   const setRouteActive = (value) => {
-    console.log("setRouteActive===", value);
+    // console.log("setRouteActive===", value);
     navigate(value);
   };
   const containerDiv = useRef(null);

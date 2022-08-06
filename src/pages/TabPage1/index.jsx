@@ -6,7 +6,7 @@ class TabPage1 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputVal: "",
+      inputVal: Date.now().toString(),
     };
   }
   gotopage1 = () => {
@@ -24,10 +24,10 @@ class TabPage1 extends Component {
     this.props.navigate("/main/tabpage1/page1");
   };
   componentDidMount() {
-    console.log("componentDidMount===/main/tabpage1");
+    console.log("componentDidMount===tp1");
   }
   componentWillUnmount() {
-    console.log("componentWillUnmount===/main/tabpage1");
+    console.log("componentWillUnmount===tp1");
   }
 
   render() {

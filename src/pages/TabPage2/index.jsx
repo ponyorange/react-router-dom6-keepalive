@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import "./index.scss";
 
 const TabPage2 = function () {
@@ -6,7 +6,9 @@ const TabPage2 = function () {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
   ];
   const containerDiv = useRef(null);
-  useEffect(() => {}, []);
+  useLayoutEffect(() => {
+    console.log("useLayoutEffect==tp2");
+  }, []);
   return (
     <div className="tabpage2" ref={containerDiv}>
       TabPage2
